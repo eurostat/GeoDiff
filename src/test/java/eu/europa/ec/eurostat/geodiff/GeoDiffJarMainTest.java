@@ -14,7 +14,20 @@ public class GeoDiffJarMainTest extends TestCase {
 	}
 
 	public void test() throws Exception {
-		GeoDiffJarMain.main(new String[] {"-ini", "src/test/resources/ini_surf.gpkg", "-fin", "src/test/resources/fin_surf.gpkg", "-o", "target/test/"});
+		for(String gt : new String[] {"surf","lin","pt"})
+			GeoDiffJarMain.main(new String[] {"-ini", "src/test/resources/ini_"+gt+".gpkg", "-fin", "src/test/resources/fin_"+gt+".gpkg", "-o", "target/testout/test_"+gt+"/"});
 	}
 
+	public void testRes() throws Exception {
+		for(String gt : new String[] {"surf"})
+			GeoDiffJarMain.main(new String[] {"-ini", "src/test/resources/ini_"+gt+".gpkg", "-fin", "src/test/resources/fin_"+gt+".gpkg", "-o", "target/testout/test_res_"+gt+"/", "-res", "50"});
+	}
+
+	public void testOutFormat() throws Exception {
+		for(String gt : new String[] {"surf","lin","pt"}) {
+			GeoDiffJarMain.main(new String[] {"-ini", "src/test/resources/ini_"+gt+".gpkg", "-fin", "src/test/resources/fin_"+gt+".gpkg", "-o", "target/testout/test_of_"+gt+"/", "-of", "gpkg"});
+			GeoDiffJarMain.main(new String[] {"-ini", "src/test/resources/ini_"+gt+".gpkg", "-fin", "src/test/resources/fin_"+gt+".gpkg", "-o", "target/testout/test_of_"+gt+"/", "-of", "shp"});
+			GeoDiffJarMain.main(new String[] {"-ini", "src/test/resources/ini_"+gt+".gpkg", "-fin", "src/test/resources/fin_"+gt+".gpkg", "-o", "target/testout/test_of_"+gt+"/", "-of", "geojson"});
+		}
+	}
 }

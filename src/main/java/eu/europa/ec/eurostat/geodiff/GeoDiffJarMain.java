@@ -71,7 +71,10 @@ public class GeoDiffJarMain {
 		ArrayList<Feature> fsIni = null;
 		try {
 			fsIni = getFeatures(param);
-		} catch (Exception e) { System.err.println(e.getMessage()); return; }
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
 		System.out.println("   " + fsIni.size() + " features loaded.");
 
 		//fin
@@ -80,7 +83,10 @@ public class GeoDiffJarMain {
 		ArrayList<Feature> fsFin = null;
 		try {
 			fsFin = getFeatures(param);
-		} catch (Exception e) { System.err.println(e.getMessage()); return; }
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
 		System.out.println("   " + fsFin.size() + " features loaded.");
 
 		//crs
@@ -88,7 +94,7 @@ public class GeoDiffJarMain {
 		try {
 			crs = getCRS(param);
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
+			e.printStackTrace();
 			return;
 		}
 
@@ -104,20 +110,22 @@ public class GeoDiffJarMain {
 				resolution = Double.parseDouble(param);
 			} catch (Exception e) {
 				System.err.println("Failed reading parameter 'res'. The default value will be used.");
+				e.printStackTrace();
 			}
 
 		//output folder
 		String outFolder = cmd.getOptionValue("o");
 		if(outFolder == null) outFolder = Paths.get("").toAbsolutePath().toString();
 
-		boolean b = new File(outFolder).mkdirs();
-		if(!b) System.err.println("Problem when creating output folder: " + outFolder);
+		/*boolean b = */
+		new File(outFolder).mkdirs();
+		//if(!b) System.err.println("Problem when creating output folder: " + outFolder);
 
 		//output format
 		String outputFileFormat = cmd.getOptionValue("of");
 		if(outputFileFormat == null) outputFileFormat = "gpkg";
 		if(!"geojson".equals(outputFileFormat) && !"gpkg".equals(outputFileFormat) && !"shp".equals(outputFileFormat)) {
-			System.err.println("Unexpected output format. The default format will be used.");
+			System.err.println("Unexpected output format: " + outputFileFormat + ". The default format will be used.");
 			outputFileFormat = "gpkg";
 		}
 
@@ -139,7 +147,7 @@ public class GeoDiffJarMain {
 			save(cd.getGeomChanges(), outFolder + File.separator + "geomdiff2", outputFileFormat, crs);
 			save(ChangeDetection.findIdStabilityIssues(cd.getChanges(), resolution), outFolder + File.separator + "idstab", outputFileFormat, crs);
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -180,9 +188,9 @@ public class GeoDiffJarMain {
 	}
 
 	private static void save(Collection<Feature> fs, String pathFNE, String outputFileFormat, CoordinateReferenceSystem crs) throws Exception {
+		if(fs.size() == 0) return;
 		switch(outputFileFormat) {
 		case "shp":
-			;
 			SHPUtil.save(fs, pathFNE+".shp", crs);
 			break;
 		case "geojson":
