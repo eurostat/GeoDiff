@@ -31,7 +31,6 @@ public class GeoDiffJarMain {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		System.out.println("start");
 
 		//define options
 		Options options = new Options();
@@ -73,7 +72,7 @@ public class GeoDiffJarMain {
 		try {
 			fsIni = getFeatures(param);
 		} catch (Exception e) { System.err.println(e.getMessage()); return; }
-		System.out.println("   "+fsIni.size()+" features loaded.");
+		System.out.println("   " + fsIni.size() + " features loaded.");
 
 		//fin
 		System.out.println("Loading final dataset...");
@@ -82,7 +81,7 @@ public class GeoDiffJarMain {
 		try {
 			fsFin = getFeatures(param);
 		} catch (Exception e) { System.err.println(e.getMessage()); return; }
-		System.out.println("   "+fsFin.size()+" features loaded.");
+		System.out.println("   " + fsFin.size() + " features loaded.");
 
 		//crs
 		CoordinateReferenceSystem crs = null;
