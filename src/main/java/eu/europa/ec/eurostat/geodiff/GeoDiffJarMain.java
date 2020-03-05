@@ -39,7 +39,7 @@ public class GeoDiffJarMain {
 				.hasArg().argName("file path").build());
 		options.addOption(Option.builder("fin").longOpt("finalFile").desc("Input file containing the dataset in its final state. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension).")
 				.hasArg().argName("file path").build());
-		options.addOption(Option.builder("id").longOpt("identifier").desc("Name of the identifier field of the dataset. Default: 'id'.")
+		options.addOption(Option.builder("id").longOpt("identifier").desc("Optional. Name of the identifier field of the dataset. Default: 'id'.")
 				.hasArg().argName("file path").build());
 		options.addOption(Option.builder("res").longOpt("resolution").desc("Optional. The geometrical resolution of the dataset. Geometrical changes below this value will be ignored. Default: 0.")
 				.hasArg().argName("value").build());
@@ -103,15 +103,16 @@ public class GeoDiffJarMain {
 		if(param != null)
 			try {
 				resolution = Double.parseDouble(param);
-			} catch (Exception e) { System.err.println("Failed reading parameter 'res'. The default value will be used."); }
+			} catch (Exception e) {
+				System.err.println("Failed reading parameter 'res'. The default value will be used.");
+			}
 
 		//output folder
 		String outFolder = cmd.getOptionValue("o");
 		if(outFolder == null) outFolder = Paths.get("").toAbsolutePath().toString();
 
 		boolean b = new File(outFolder).mkdirs();
-		if(!b) System.err.println("Problem when creating output folder " + outFolder);
-
+		if(!b) System.err.println("Problem when creating output folder: " + outFolder);
 
 		//output format
 		String outputFileFormat = cmd.getOptionValue("of");
@@ -132,6 +133,8 @@ public class GeoDiffJarMain {
 
 		try {
 			System.out.println(cd.getChanges().size() + " changes found.");
+			System.out.println("Save...");
+
 			save(cd.getChanges(), outFolder + File.separator + "changes", outputFileFormat, crs);
 			save(cd.getHausdorffGeomChanges(), outFolder + File.separator + "geomdiff1", outputFileFormat, crs);
 			save(cd.getGeomChanges(), outFolder + File.separator + "geomdiff2", outputFileFormat, crs);
