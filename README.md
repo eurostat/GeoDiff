@@ -1,6 +1,6 @@
 # GeoDiff
 
-[GeoDiff](https://github.com/eurostat/GeoDiff) analyses changes between two versions of a vector geospatial dataset.
+[GeoDiff](https://github.com/eurostat/GeoDiff) analyses differences between two versions of a vector geospatial dataset.
 
 <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/changedetection/img/ini.png" width="200" /></kbd> **+** <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/changedetection/img/fin.png" width="200" /></kbd> **=** <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/changedetection/img/changes.png" width="200" /></kbd>
 
