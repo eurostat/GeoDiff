@@ -49,7 +49,7 @@ The program produces the following datasets:
 
 - **geomdiff1** dataset containing a set of linear features representing the [Hausdorf segments](https://en.wikipedia.org/wiki/Hausdorff_distance) between the two versions of the geometries. This segment represents the place where the geometrical change between the two versions is maximum. Its length is a good measure for the change magnitude.
 
-<kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/changedetection/img/hausdorf_segment.png" /></kbd>
+<kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/changedetection/img/hausdorf_segment.png" width=100 /></kbd>
 
 (Initial version in gray - Final version blue outline - Corresponding Hausdorf segment in purple)
 
