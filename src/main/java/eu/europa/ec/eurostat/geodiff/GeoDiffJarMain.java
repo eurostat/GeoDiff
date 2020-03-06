@@ -36,7 +36,9 @@ public class GeoDiffJarMain {
 		Options options = new Options();
 		options.addOption(Option.builder("ini").longOpt("initialFile").desc("Input file containing the dataset in its initial state. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension).")
 				.hasArg().argName("file path").build());
-		options.addOption(Option.builder("fin").longOpt("finalFile").desc("Input file containing the dataset in its final state. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension).")
+		options.addOption(Option.builder("fin").longOpt("finalFile").desc("Optional. Input file containing the dataset in its final state. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension).")
+				.hasArg().argName("file path").build());
+		options.addOption(Option.builder("d").longOpt("geoDiffFile").desc("Optional. In change application mode, the geodiff file to apply to the initial version.")
 				.hasArg().argName("file path").build());
 		options.addOption(Option.builder("id").longOpt("identifier").desc("Optional. Name of the identifier field of the dataset. Default: 'id'.")
 				.hasArg().argName("file path").build());
@@ -77,18 +79,6 @@ public class GeoDiffJarMain {
 		}
 		System.out.println("   " + fsIni.size() + " features loaded.");
 
-		//fin
-		System.out.println("Loading final dataset...");
-		param = cmd.getOptionValue("fin");
-		ArrayList<Feature> fsFin = null;
-		try {
-			fsFin = getFeatures(param);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
-		}
-		System.out.println("   " + fsFin.size() + " features loaded.");
-
 		//crs
 		CoordinateReferenceSystem crs = null;
 		try {
@@ -99,56 +89,103 @@ public class GeoDiffJarMain {
 		}
 
 		//id
+		//TODO is it common to both use cases?
 		String id = cmd.getOptionValue("id");
 		if(id == null) id = "id";
 
-		//res
-		double resolution = -1;
-		param = cmd.getOptionValue("res");
-		if(param != null)
+		//fin
+		param = cmd.getOptionValue("fin");
+		if(param != null) {
+			//change analysis case
+			System.out.println("Loading final dataset...");
+			ArrayList<Feature> fsFin = null;
 			try {
-				resolution = Double.parseDouble(param);
+				fsFin = getFeatures(param);
 			} catch (Exception e) {
-				System.err.println("Failed reading parameter 'res'. The default value will be used.");
+				e.printStackTrace();
+				return;
+			}
+			System.out.println("   " + fsFin.size() + " features loaded.");
+
+			//res
+			double resolution = -1;
+			param = cmd.getOptionValue("res");
+			if(param != null)
+				try {
+					resolution = Double.parseDouble(param);
+				} catch (Exception e) {
+					System.err.println("Failed reading parameter 'res'. The default value will be used.");
+					e.printStackTrace();
+				}
+
+			//output folder
+			String outFolder = cmd.getOptionValue("o");
+			if(outFolder == null) outFolder = Paths.get("").toAbsolutePath().toString();
+
+			/*boolean b = */
+			new File(outFolder).mkdirs();
+			//if(!b) System.err.println("Problem when creating output folder: " + outFolder);
+
+			//output format
+			String outputFileFormat = cmd.getOptionValue("of");
+			if(outputFileFormat == null) outputFileFormat = "gpkg";
+			if(!"geojson".equals(outputFileFormat) && !"gpkg".equals(outputFileFormat) && !"shp".equals(outputFileFormat)) {
+				System.err.println("Unexpected output format: " + outputFileFormat + ". The default format will be used.");
+				outputFileFormat = "gpkg";
+			}
+
+			System.out.println("Compute changes...");
+
+			//set identifiers
+			FeatureUtil.setId(fsIni, id);
+			FeatureUtil.setId(fsFin, id);
+
+			//build change detection object
+			ChangeDetection cd = new ChangeDetection(fsIni, fsFin, resolution);
+
+			try {
+				System.out.println(cd.getChanges().size() + " changes found.");
+				System.out.println("Save...");
+
+				save(cd.getChanges(), outFolder + File.separator + "changes", outputFileFormat, crs);
+				save(cd.getHausdorffGeomChanges(), outFolder + File.separator + "geomdiff1", outputFileFormat, crs);
+				save(cd.getGeomChanges(), outFolder + File.separator + "geomdiff2", outputFileFormat, crs);
+				save(ChangeDetection.findIdStabilityIssues(cd.getChanges(), resolution), outFolder + File.separator + "idstab", outputFileFormat, crs);
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
-		//output folder
-		String outFolder = cmd.getOptionValue("o");
-		if(outFolder == null) outFolder = Paths.get("").toAbsolutePath().toString();
+		} else {
+			param = cmd.getOptionValue("d");
+			//change application case
 
-		/*boolean b = */
-		new File(outFolder).mkdirs();
-		//if(!b) System.err.println("Problem when creating output folder: " + outFolder);
+			//TODO if param null, exit
 
-		//output format
-		String outputFileFormat = cmd.getOptionValue("of");
-		if(outputFileFormat == null) outputFileFormat = "gpkg";
-		if(!"geojson".equals(outputFileFormat) && !"gpkg".equals(outputFileFormat) && !"shp".equals(outputFileFormat)) {
-			System.err.println("Unexpected output format: " + outputFileFormat + ". The default format will be used.");
-			outputFileFormat = "gpkg";
-		}
+			//get changes dataset
+			System.out.println("Loading changes...");
+			param = cmd.getOptionValue("c");
+			ArrayList<Feature> changes = null;
+			try {
+				changes = getFeatures(param);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return;
+			}
+			System.out.println("   " + fsIni.size() + " features loaded.");
 
-		System.out.println("Compute changes...");
+			System.out.println("Apply changes...");
+			ChangeDetection.applyChanges(fsIni, changes);
 
-		//set identifiers
-		FeatureUtil.setId(fsIni, id);
-		FeatureUtil.setId(fsFin, id);
-
-		//build change detection object
-		ChangeDetection cd = new ChangeDetection(fsIni, fsFin, resolution);
-
-		try {
-			System.out.println(cd.getChanges().size() + " changes found.");
 			System.out.println("Save...");
+			try {
+				//TODO change file name - same as initial one with suffix.
+				//save(fsIni, outFolder + File.separator + "updated", outputFileFormat, crs);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
-			save(cd.getChanges(), outFolder + File.separator + "changes", outputFileFormat, crs);
-			save(cd.getHausdorffGeomChanges(), outFolder + File.separator + "geomdiff1", outputFileFormat, crs);
-			save(cd.getGeomChanges(), outFolder + File.separator + "geomdiff2", outputFileFormat, crs);
-			save(ChangeDetection.findIdStabilityIssues(cd.getChanges(), resolution), outFolder + File.separator + "idstab", outputFileFormat, crs);
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
+
 	}
 
 	/**
