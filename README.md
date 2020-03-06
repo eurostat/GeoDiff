@@ -2,7 +2,7 @@
 
 [GeoDiff](https://github.com/eurostat/GeoDiff) analyses changes between two versions of a vector geospatial dataset.
 
-<kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/changedetection/img/ini.png" /></kbd>
+<img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/changedetection/img/ini.png" width="100" />
 
 <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/changedetection/img/fin.png" /></kbd>
 
