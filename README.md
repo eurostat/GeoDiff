@@ -1,19 +1,27 @@
 # GeoDiff
 
-[GeoDiff](https://github.com/eurostat/GeoDiff) analyses differences between two versions of a vector geospatial dataset.
+[GeoDiff](https://github.com/eurostat/GeoDiff) allows: 
+- analysing differences between two versions of a vector geospatial dataset.
+- applying updates to a vector geospatial dataset.
 
 <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/changedetection/img/ini.png" width="200" /></kbd> **+** <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/changedetection/img/fin.png" width="200" /></kbd> **=** <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/changedetection/img/changes.png" width="200" /></kbd>
+
+(TODO images of update mode)
 
 ## Quick start
 
 1. Download [geodiff-1.0.zip](releases/geodiff-1.0.zip?raw=true) and unzip somewhere.
 2. Run: `java -jar GeoDiff.jar -ini pathTo/dataset_initial.gpkg -fin pathTo/dataset_final.gpkg -id identCol -o out/` to analyse the changes between two datasets and store the analysis result in *out/* folder. *identCol* is the name of the identifier column in both datasets. You can alternativelly edit and execute *geodiff.bat* (or *geodiff.sh* for Linux users).
 
-## Usage
+(TODO: short example on how to run update mode?)
 
-### Requirements
+## Requirements
 
 Java 1.8 or higher is required. The java version installed, if any, can be found with `java --version` command. Recent versions of Java can be installed from [here](https://www.java.com/).
+
+## Difference analysis mode
+
+This mode analyses differences between two versions of a vector geospatial dataset. It produces a [GeoDiff](/geodiff_format) file representing the differences between both datasets and some other information on these differences.
 
 ### Input parameters
 
@@ -22,10 +30,10 @@ The help is displayed with `java -jar GeoDiff.jar -h` command.
 | Parameter | Required | Description | Default value |
 | ------------- | ------------- |-------------| ------|
 | -h | | Show the help message |  |
-| -ini | * | Input file containing the dataset in its initial state. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
-| -fin | * | Input file containing the dataset in its final state. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
-| -id |  | Name of the identifier field of the dataset. | 'id' |
-| -res |  | The geometrical resolution of the dataset. Geometrical changes below this value will be ignored. | 0 |
+| -ini | * | Input dataset in its initial state. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
+| -fin | * | Input dataset in its final state. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
+| -id |  | Name of the identifier field. | 'id' |
+| -res |  | The geometrical resolution. Geometrical changes below this value will be ignored. | 0 |
 | -o |  | Output folder. | The current location of the program. |
 | -of |  | Output format. The supported formats are GeoJSON ('geojson'), SHP ('shp') and GeoPackage ('gpkg') | 'gpkg' |
 
@@ -33,13 +41,7 @@ The help is displayed with `java -jar GeoDiff.jar -h` command.
 
 The program produces the following datasets:
 
-- **changes** dataset containing the changes between both versions:
-   - Features that have been **deleted** (attribute *change* set to *D*)
-   - Features that have been **inserted** (attribute *change* set to *I*)
-   - Features that have been **modified**,
-      * Either their geometry (attribute *change* set to *G*)
-      * or some attribute values (attribute *change* set to *An* where *n* is the number of modified attributes)
-      * or both (attribute *change* set to *GAn*)
+- **geodiff** dataset containing the changes between both versions in [GeoDiff format](/geodiff_format).
 
 <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/changedetection/img/changes.png" height="250" /></kbd>
 
@@ -61,7 +63,28 @@ The program produces the following datasets:
 
 (Detected stability issues in pink)
 
-### For coders
+
+## Update mode
+
+This mode applies updates to a vector geospatial dataset. The updates are specified in a *geodiff* file.
+
+### Input parameters
+
+The help is displayed with `java -jar GeoDiff.jar -h` command.
+
+| Parameter | Required | Description | Default value |
+| ------------- | ------------- |-------------| ------|
+| -h | | Show the help message |  |
+| -ini | * | Input dataset in its initial state. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
+| -d | * | The updates to apply to the initial version, in GeoDiff format. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). | changes.gpkg |
+| -id |  | Name of the identifier field. | 'id' |
+| -up |  | Output updated dataset. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). | out.gpkg |
+
+### Output
+
+The output is the dataset updated with the specified updates.
+
+## For coders
 
 Install [JGiscoTools](https://github.com/eurostat/JGiscoTools/) and see the instructions [here](https://github.com/eurostat/JGiscoTools/tree/master/src/site/changedetection).
 
