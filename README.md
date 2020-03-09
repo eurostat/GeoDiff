@@ -21,7 +21,7 @@ Java 1.8 or higher is required. The java version installed, if any, can be found
 
 ## Difference analysis mode
 
-This mode analyses differences between two versions of a vector geospatial dataset. It produces the *geodiff* data of both datasets and some other information on the differences.
+This mode analyses differences between two versions of a vector geospatial dataset. It produces a [GeoDiff](/geodiff_format) file representing the differences between both datasets and some other information on these differences.
 
 ### Input parameters
 
@@ -41,8 +41,11 @@ The help is displayed with `java -jar GeoDiff.jar -h` command.
 
 The program produces the following datasets:
 
-- **changes** dataset containing the changes between both versions:
-   - Features that have been **deleted** (attribute *change* set to *D*)
+- **geodiff** dataset containing the changes between both versions in [GeoDiff format](/geodiff_format):
+
+MOVE
+
+- Features that have been **deleted** (attribute *change* set to *D*)
    - Features that have been **inserted** (attribute *change* set to *I*)
    - Features that have been **modified**,
       * Either their geometry (attribute *change* set to *G*)
@@ -50,6 +53,8 @@ The program produces the following datasets:
       * or both (attribute *change* set to *GAn*)
 
 <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/changedetection/img/changes.png" height="250" /></kbd>
+
+MOVE
 
 - **geomdiff1** dataset containing a set of linear features representing the [Hausdorf segments](https://en.wikipedia.org/wiki/Hausdorff_distance) between the two versions of the geometries. This segment represents the place where the geometrical change between the two versions is maximum. Its length is a good measure for the change magnitude.
 
