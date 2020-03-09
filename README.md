@@ -41,20 +41,9 @@ The help is displayed with `java -jar GeoDiff.jar -h` command.
 
 The program produces the following datasets:
 
-- **geodiff** dataset containing the changes between both versions in [GeoDiff format](/geodiff_format):
-
-MOVE
-
-- Features that have been **deleted** (attribute *change* set to *D*)
-   - Features that have been **inserted** (attribute *change* set to *I*)
-   - Features that have been **modified**,
-      * Either their geometry (attribute *change* set to *G*)
-      * or some attribute values (attribute *change* set to *An* where *n* is the number of modified attributes)
-      * or both (attribute *change* set to *GAn*)
+- **geodiff** dataset containing the changes between both versions in [GeoDiff format](/geodiff_format).
 
 <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/changedetection/img/changes.png" height="250" /></kbd>
-
-MOVE
 
 - **geomdiff1** dataset containing a set of linear features representing the [Hausdorf segments](https://en.wikipedia.org/wiki/Hausdorff_distance) between the two versions of the geometries. This segment represents the place where the geometrical change between the two versions is maximum. Its length is a good measure for the change magnitude.
 
