@@ -34,19 +34,27 @@ public class GeoDiffJarMain {
 
 		//define options
 		Options options = new Options();
+		
+		//common options
 		options.addOption(Option.builder("ini").longOpt("initialFile").desc("Input file containing the dataset in its initial state. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension).")
 				.hasArg().argName("file path").build());
-		options.addOption(Option.builder("fin").longOpt("finalFile").desc("Optional. Input file containing the dataset in its final state. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension).")
-				.hasArg().argName("file path").build());
-		options.addOption(Option.builder("d").longOpt("geoDiffFile").desc("Optional. In change application mode, the geodiff file to apply to the initial version.")
-				.hasArg().argName("file path").build());
 		options.addOption(Option.builder("id").longOpt("identifier").desc("Optional. Name of the identifier field of the dataset. Default: 'id'.")
+				.hasArg().argName("file path").build());
+
+		//options for change analysis mode
+		options.addOption(Option.builder("fin").longOpt("finalFile").desc("Optional. Input file containing the dataset in its final state. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension).")
 				.hasArg().argName("file path").build());
 		options.addOption(Option.builder("res").longOpt("resolution").desc("Optional. The geometrical resolution of the dataset. Geometrical changes below this value will be ignored. Default: 0.")
 				.hasArg().argName("value").build());
 		options.addOption(Option.builder("o").longOpt("outputFolder").desc("Optional. Output folder.")
 				.hasArg().argName("file path").build());
 		options.addOption(Option.builder("of").longOpt("outputFormat").desc("Optional. Output format. The supported formats are GeoJSON ('geojson'), SHP ('shp') and GeoPackage ('gpkg'). Default: 'gpkg'.")
+				.hasArg().argName("file path").build());
+
+		//options for update mode
+		options.addOption(Option.builder("d").longOpt("geoDiffFile").desc("Optional. The updates to apply to the initial version, in GeoDiff format. The supported formats are GeoJSON (\\*.geojson extension), SHP (\\*.shp extension) and GeoPackage (\\*.gpkg extension). Default: 'changes.gpkg'.")
+				.hasArg().argName("file path").build());
+		options.addOption(Option.builder("up").longOpt("outputFolder").desc("Optional. Output folder.")
 				.hasArg().argName("file path").build());
 
 		options.addOption(Option.builder("h").desc("Show this help message").build());
@@ -143,11 +151,12 @@ public class GeoDiffJarMain {
 			//build change detection object
 			ChangeDetection cd = new ChangeDetection(fsIni, fsFin, resolution);
 
+			//TODO: change geodiff attribute 'change' to 'GeoDiff'
 			try {
 				System.out.println(cd.getChanges().size() + " changes found.");
 				System.out.println("Save...");
 
-				save(cd.getChanges(), outFolder + File.separator + "changes", outputFileFormat, crs);
+				save(cd.getChanges(), outFolder + File.separator + "geodiff", outputFileFormat, crs);
 				save(cd.getHausdorffGeomChanges(), outFolder + File.separator + "geomdiff1", outputFileFormat, crs);
 				save(cd.getGeomChanges(), outFolder + File.separator + "geomdiff2", outputFileFormat, crs);
 				save(ChangeDetection.findIdStabilityIssues(cd.getChanges(), resolution), outFolder + File.separator + "idstab", outputFileFormat, crs);
