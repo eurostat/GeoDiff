@@ -34,27 +34,27 @@ public class GeoDiffJarMain {
 
 		//define options
 		Options options = new Options();
-		
+
 		//common options
 		options.addOption(Option.builder("ini").longOpt("initialFile").desc("Input file containing the dataset in its initial state. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension).")
 				.hasArg().argName("file path").build());
-		options.addOption(Option.builder("id").longOpt("identifier").desc("Optional. Name of the identifier field of the dataset. Default: 'id'.")
-				.hasArg().argName("file path").build());
 
 		//options for change analysis mode
-		options.addOption(Option.builder("fin").longOpt("finalFile").desc("Optional. Input file containing the dataset in its final state. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension).")
+		options.addOption(Option.builder("fin").longOpt("finalFile").desc("Input file containing the dataset in its final state. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension).")
+				.hasArg().argName("file path").build());
+		options.addOption(Option.builder("id").longOpt("identifier").desc("Optional. Name of the identifier field of the dataset. Default: 'id'.")
 				.hasArg().argName("file path").build());
 		options.addOption(Option.builder("res").longOpt("resolution").desc("Optional. The geometrical resolution of the dataset. Geometrical changes below this value will be ignored. Default: 0.")
 				.hasArg().argName("value").build());
 		options.addOption(Option.builder("o").longOpt("outputFolder").desc("Optional. Output folder.")
 				.hasArg().argName("file path").build());
-		options.addOption(Option.builder("of").longOpt("outputFormat").desc("Optional. Output format. The supported formats are GeoJSON ('geojson'), SHP ('shp') and GeoPackage ('gpkg'). Default: 'gpkg'.")
+		options.addOption(Option.builder("of").longOpt("outputFormat").desc("Optional. Output format. The supported formats are GeoJSON ('geojson'), SHP ('shp') and GeoPackage ('gpkg'). Default: 'out.gpkg'.")
 				.hasArg().argName("file path").build());
 
 		//options for update mode
-		options.addOption(Option.builder("d").longOpt("geoDiffFile").desc("Optional. The updates to apply to the initial version, in GeoDiff format. The supported formats are GeoJSON (\\*.geojson extension), SHP (\\*.shp extension) and GeoPackage (\\*.gpkg extension). Default: 'changes.gpkg'.")
+		options.addOption(Option.builder("d").longOpt("geoDiffFile").desc("The updates to apply to the initial version, in GeoDiff format. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension). Default: 'changes.gpkg'.")
 				.hasArg().argName("file path").build());
-		options.addOption(Option.builder("up").longOpt("outputFolder").desc("Optional. Output folder.")
+		options.addOption(Option.builder("o").longOpt("outputFile").desc("Optional. Output file with changes applied. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension).")
 				.hasArg().argName("file path").build());
 
 		options.addOption(Option.builder("h").desc("Show this help message").build());
@@ -96,11 +96,6 @@ public class GeoDiffJarMain {
 			return;
 		}
 
-		//id
-		//TODO is it common to both use cases?
-		String id = cmd.getOptionValue("id");
-		if(id == null) id = "id";
-
 		//fin
 		param = cmd.getOptionValue("fin");
 		if(param != null) {
@@ -114,6 +109,14 @@ public class GeoDiffJarMain {
 				return;
 			}
 			System.out.println("   " + fsFin.size() + " features loaded.");
+
+			//TODO check both have the same schema
+
+			//TODO add attributes to ignore
+
+			//id
+			String id = cmd.getOptionValue("id");
+			if(id == null) id = "id";
 
 			//res
 			double resolution = -1;
@@ -148,18 +151,18 @@ public class GeoDiffJarMain {
 			FeatureUtil.setId(fsIni, id);
 			FeatureUtil.setId(fsFin, id);
 
-			//build change detection object
-			ChangeDetection cd = new ChangeDetection(fsIni, fsFin, resolution);
+			//build geoDiff object
+			ChangeDetection geoDiff = new ChangeDetection(fsIni, fsFin, resolution);
 
 			//TODO: change geodiff attribute 'change' to 'GeoDiff'
 			try {
-				System.out.println(cd.getChanges().size() + " changes found.");
+				System.out.println(geoDiff.getChanges().size() + " changes found.");
 				System.out.println("Save...");
 
-				save(cd.getChanges(), outFolder + File.separator + "geodiff", outputFileFormat, crs);
-				save(cd.getHausdorffGeomChanges(), outFolder + File.separator + "geomdiff1", outputFileFormat, crs);
-				save(cd.getGeomChanges(), outFolder + File.separator + "geomdiff2", outputFileFormat, crs);
-				save(ChangeDetection.findIdStabilityIssues(cd.getChanges(), resolution), outFolder + File.separator + "idstab", outputFileFormat, crs);
+				save(geoDiff.getChanges(), outFolder + File.separator + "geodiff." + outputFileFormat, crs);
+				save(geoDiff.getHausdorffGeomChanges(), outFolder + File.separator + "geomdiff1." + outputFileFormat, crs);
+				save(geoDiff.getGeomChanges(), outFolder + File.separator + "geomdiff2." + outputFileFormat, crs);
+				save(ChangeDetection.findIdStabilityIssues(geoDiff.getChanges(), resolution), outFolder + File.separator + "idstab." + outputFileFormat, crs);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -185,10 +188,13 @@ public class GeoDiffJarMain {
 			System.out.println("Apply changes...");
 			ChangeDetection.applyChanges(fsIni, changes);
 
+			//output file
+			String outputFile = cmd.getOptionValue("o");
+			if(outputFile == null) outputFile = Paths.get("").toAbsolutePath().toString() + "/out.gpkg";
+
 			System.out.println("Save...");
 			try {
-				//TODO change file name - same as initial one with suffix.
-				//save(fsIni, outFolder + File.separator + "updated", outputFileFormat, crs);
+				save(fsIni, outputFile, crs);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -233,17 +239,18 @@ public class GeoDiffJarMain {
 		}
 	}
 
-	private static void save(Collection<Feature> fs, String pathFNE, String outputFileFormat, CoordinateReferenceSystem crs) throws Exception {
+	private static void save(Collection<Feature> fs, String filePath, CoordinateReferenceSystem crs) throws Exception {
 		if(fs.size() == 0) return;
+		String outputFileFormat = FilenameUtils.getExtension(filePath).toLowerCase();
 		switch(outputFileFormat) {
 		case "shp":
-			SHPUtil.save(fs, pathFNE+".shp", crs);
+			SHPUtil.save(fs, filePath, crs);
 			break;
 		case "geojson":
-			GeoJSONUtil.save(fs, pathFNE+".geojson", crs);
+			GeoJSONUtil.save(fs, filePath, crs);
 			break;
 		case "gpkg":
-			GeoPackageUtil.save(fs, pathFNE+".gpkg", crs, true);
+			GeoPackageUtil.save(fs, filePath, crs, true);
 			break;
 		default:
 			throw new Exception("Unsuported output format: " + outputFileFormat);
