@@ -3,7 +3,6 @@ package eu.europa.ec.eurostat.geodiff;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -11,15 +10,12 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.FilenameUtils;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import eu.europa.ec.eurostat.jgiscotools.changedetection.ChangeDetection;
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoJSONUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.GeoPackageUtil;
-import eu.europa.ec.eurostat.jgiscotools.io.SHPUtil;
+import eu.europa.ec.eurostat.jgiscotools.geodiff.DifferenceDetection;
+import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
 
 /**
  * @author julien Gaffuri
@@ -80,7 +76,7 @@ public class GeoDiffJarMain {
 		param = cmd.getOptionValue("ini");
 		ArrayList<Feature> fsIni = null;
 		try {
-			fsIni = getFeatures(param);
+			fsIni = GeoData.getFeatures(param);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
@@ -90,7 +86,7 @@ public class GeoDiffJarMain {
 		//crs
 		CoordinateReferenceSystem crs = null;
 		try {
-			crs = getCRS(param);
+			crs = GeoData.getCRS(param);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
@@ -103,7 +99,7 @@ public class GeoDiffJarMain {
 			System.out.println("Loading final dataset...");
 			ArrayList<Feature> fsFin = null;
 			try {
-				fsFin = getFeatures(param);
+				fsFin = GeoData.getFeatures(param);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return;
@@ -152,17 +148,17 @@ public class GeoDiffJarMain {
 			FeatureUtil.setId(fsFin, id);
 
 			//build geoDiff object
-			ChangeDetection geoDiff = new ChangeDetection(fsIni, fsFin, resolution);
+			DifferenceDetection geoDiff = new DifferenceDetection(fsIni, fsFin, resolution);
 
 			//TODO: change geodiff attribute 'change' to 'GeoDiff'
 			try {
-				System.out.println(geoDiff.getChanges().size() + " changes found.");
+				System.out.println(geoDiff.getDifferences().size() + " changes found.");
 				System.out.println("Save...");
 
-				save(geoDiff.getChanges(), outFolder + File.separator + "geodiff." + outputFileFormat, crs);
-				save(geoDiff.getHausdorffGeomChanges(), outFolder + File.separator + "geomdiff1." + outputFileFormat, crs);
-				save(geoDiff.getGeomChanges(), outFolder + File.separator + "geomdiff2." + outputFileFormat, crs);
-				save(ChangeDetection.findIdStabilityIssues(geoDiff.getChanges(), resolution), outFolder + File.separator + "idstab." + outputFileFormat, crs);
+				GeoData.save(geoDiff.getDifferences(), outFolder + File.separator + "geodiff." + outputFileFormat, crs);
+				GeoData.save(geoDiff.getHausdorffGeomDifferences(), outFolder + File.separator + "geomdiff1." + outputFileFormat, crs);
+				GeoData.save(geoDiff.getGeomDifferences(), outFolder + File.separator + "geomdiff2." + outputFileFormat, crs);
+				GeoData.save(DifferenceDetection.findIdStabilityIssues(geoDiff.getDifferences(), resolution), outFolder + File.separator + "idstab." + outputFileFormat, crs);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -178,7 +174,7 @@ public class GeoDiffJarMain {
 			param = cmd.getOptionValue("c");
 			ArrayList<Feature> changes = null;
 			try {
-				changes = getFeatures(param);
+				changes = GeoData.getFeatures(param);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return;
@@ -186,7 +182,7 @@ public class GeoDiffJarMain {
 			System.out.println("   " + fsIni.size() + " features loaded.");
 
 			System.out.println("Apply changes...");
-			ChangeDetection.applyChanges(fsIni, changes);
+			DifferenceDetection.applyChanges(fsIni, changes);
 
 			//output file
 			String outputFile = cmd.getOptionValue("o");
@@ -194,67 +190,13 @@ public class GeoDiffJarMain {
 
 			System.out.println("Save...");
 			try {
-				save(fsIni, outputFile, crs);
+				GeoData.save(fsIni, outputFile, crs);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
 		}
 
-	}
-
-	/**
-	 * Get features from a data source parameter
-	 * 
-	 * @param param
-	 * @return
-	 * @throws Exception
-	 */
-	private static ArrayList<Feature> getFeatures(String param) throws Exception {
-		String inputFileFormat = FilenameUtils.getExtension(param).toLowerCase();
-		switch(inputFileFormat) {
-		case "shp":
-			return SHPUtil.getFeatures(param);
-		case "geojson":
-			return GeoJSONUtil.load(param);
-		case "gpkg":
-			return GeoPackageUtil.getFeatures(param);
-		default:
-			throw new Exception("Could not retrieve features from data source: "+param);
-		}
-	}
-
-	private static CoordinateReferenceSystem getCRS(String param) throws Exception {
-		String inputFileFormat = FilenameUtils.getExtension(param).toLowerCase();
-		switch(inputFileFormat) {
-		case "shp":
-			return SHPUtil.getCRS(param);
-		case "geojson":
-			//TODO
-			return null;
-		case "gpkg":
-			return GeoPackageUtil.getCRS(param);
-		default:
-			throw new Exception("Could not retrieve CRS from data source: "+param);
-		}
-	}
-
-	private static void save(Collection<Feature> fs, String filePath, CoordinateReferenceSystem crs) throws Exception {
-		if(fs.size() == 0) return;
-		String outputFileFormat = FilenameUtils.getExtension(filePath).toLowerCase();
-		switch(outputFileFormat) {
-		case "shp":
-			SHPUtil.save(fs, filePath, crs);
-			break;
-		case "geojson":
-			GeoJSONUtil.save(fs, filePath, crs);
-			break;
-		case "gpkg":
-			GeoPackageUtil.save(fs, filePath, crs, true);
-			break;
-		default:
-			throw new Exception("Unsuported output format: " + outputFileFormat);
-		}
 	}
 
 }
