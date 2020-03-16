@@ -108,7 +108,7 @@ public class GeoDiffJarMain {
 
 			//TODO check both have the same schema
 
-			//TODO add attributes to ignore
+			//TODO add attributes to ignore as a parameter
 
 			//id
 			String id = cmd.getOptionValue("id");
