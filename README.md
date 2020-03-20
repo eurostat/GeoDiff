@@ -14,9 +14,10 @@ Update mode:
 
 ## Quick start
 
-1. Download [geodiff-2.0.zip](releases/geodiff-2.0.zip?raw=true) and unzip somewhere.
-2.
+- Download [geodiff-2.0.zip](releases/geodiff-2.0.zip?raw=true) and unzip somewhere.
+
 - To compute the difference between two versions of a dataset, run: `java -jar GeoDiff.jar -m diff -v1 pathTo/dataset_initial.gpkg -v2 pathTo/dataset_final.gpkg -id identCol -o out/`. The result is stored in a new *out/* folder. *identCol* is the name of the identifier column in both datasets. You can alternativelly edit and execute *geodiff.bat* (or *geodiff.sh* for Linux users).
+
 - To update a dataset with [GeoDiff](/geodiff_format) data, run: `java -jar GeoDiff.jar -m up -d pathTo/dataset.gpkg -c pathTo/geodiff.gpkg`. The updated dataset is stored in a new *out.gpkg* file.
 
 ## Requirements
