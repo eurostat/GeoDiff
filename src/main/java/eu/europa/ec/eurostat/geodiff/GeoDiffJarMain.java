@@ -45,6 +45,8 @@ public class GeoDiffJarMain {
 				.hasArg().argName("file path").build());
 		options.addOption(Option.builder("res").longOpt("resolution").desc("Optional. The geometrical resolution of the dataset. Geometrical differences below this value will be ignored. Default: 0.")
 				.hasArg().argName("value").build());
+		options.addOption(Option.builder("ati").longOpt("attributesToIgnore").desc("Optional. List of attributes to ignore for the comparison, comma separated.")
+				.hasArg().argName("value").build());
 		options.addOption(Option.builder("o").longOpt("outputFolder").desc("Optional. Output folder.")
 				.hasArg().argName("file path").build());
 		options.addOption(Option.builder("of").longOpt("outputFormat").desc("Optional. Output format. The supported formats are GeoJSON ('geojson'), SHP ('shp') and GeoPackage ('gpkg'). Default: 'out.gpkg'.")
@@ -53,7 +55,7 @@ public class GeoDiffJarMain {
 		//options for update mode
 		options.addOption(Option.builder("d").longOpt("dataset").desc("Initial version of the dataset. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension).")
 				.hasArg().argName("file path").build());
-		options.addOption(Option.builder("c").longOpt("geoDiffFile").desc("Optional. The changes/updates to apply, in GeoDiff format. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension). Default: 'changes.gpkg'.")
+		options.addOption(Option.builder("c").longOpt("geoDiffFile").desc("The changes/updates to apply, in GeoDiff format. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension).")
 				.hasArg().argName("file path").build());
 		options.addOption(Option.builder("o").longOpt("outputFile").desc("Optional. Output file with changes applied. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension). Default: 'out.gpkg'.")
 				.hasArg().argName("file path").build());
@@ -116,9 +118,6 @@ public class GeoDiffJarMain {
 			}
 			System.out.println("   " + fs2.size() + " features loaded.");
 
-			//TODO check both have the same schema (?)
-			//TODO add attributes to ignore as a parameter
-
 			//id
 			String id = cmd.getOptionValue("id");
 			if(id == null) id = "id";
@@ -133,6 +132,14 @@ public class GeoDiffJarMain {
 					System.err.println("Failed reading parameter 'res'. The default value will be used.");
 					System.err.println(e.getMessage());
 				}
+
+			//attributesToIgnore
+			String[] attributesToIgnore = null;
+			param = cmd.getOptionValue("ati");
+			if(param != null && !"".equals(param)) {
+				attributesToIgnore = param.split(",");
+				//check these attributes are indeed in the datasets?
+			}
 
 			//output folder
 			String outFolder = cmd.getOptionValue("o");
@@ -159,6 +166,11 @@ public class GeoDiffJarMain {
 
 			//build geoDiff object
 			DifferenceDetection geoDiff = new DifferenceDetection(fs1, fs2, resolution);
+
+			//set attributes to ignore
+			//TODO check both versions have the same schema - if not, ignore attributes (?)
+			if(attributesToIgnore != null)
+				geoDiff.setAttributesToIgnore(attributesToIgnore);
 
 			//crs
 			CoordinateReferenceSystem crs = null;

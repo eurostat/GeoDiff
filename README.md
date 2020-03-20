@@ -15,9 +15,9 @@ Update mode:
 ## Quick start
 
 1. Download [geodiff-1.0.zip](releases/geodiff-1.0.zip?raw=true) and unzip somewhere.
-2. Run: `java -jar GeoDiff.jar -ini pathTo/dataset_initial.gpkg -fin pathTo/dataset_final.gpkg -id identCol -o out/` to analyse the changes between two datasets and store the analysis result in *out/* folder. *identCol* is the name of the identifier column in both datasets. You can alternativelly edit and execute *geodiff.bat* (or *geodiff.sh* for Linux users).
-
-(TODO: short example on how to run update mode?)
+2.
+- To compute the difference between two versions of a dataset, run: `java -jar GeoDiff.jar -m diff -v1 pathTo/dataset_initial.gpkg -v2 pathTo/dataset_final.gpkg -id identCol -o out/`. The result is stored in a new *out/* folder. *identCol* is the name of the identifier column in both datasets. You can alternativelly edit and execute *geodiff.bat* (or *geodiff.sh* for Linux users).
+- To update a dataset with [GeoDiff](/geodiff_format) data, run: `java -jar GeoDiff.jar -m up -d pathTo/dataset.gpkg -c pathTo/geodiff.gpkg`. The updated dataset is stored in a new *out.gpkg* file.
 
 ## Requirements
 
@@ -34,10 +34,12 @@ The help is displayed with `java -jar GeoDiff.jar -h` command.
 | Parameter | Required | Description | Default value |
 | ------------- | ------------- |-------------| ------|
 | -h | | Show the help message |  |
-| -v1 | * | First version of the dataset. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
-| -v2 | * | Second version of the dataset. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
+| -m | | Set to 'diff' for difference anaysis mode. |  |
+| -v1 | x | First version of the dataset. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
+| -v2 | x | Second version of the dataset. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
 | -id |  | Name of the identifier field. | 'id' |
-| -res |  | The geometrical resolution. Geometrical changes below this value will be ignored. | 0 |
+| -res |  | The geometrical resolution. Geometrical differences below this value will be ignored. | 0 |
+| -ati |  | List of attributes to ignore for the comparison, comma separated. |  |
 | -o |  | Output folder. | The current location of the program. |
 | -of |  | Output format. The supported formats are GeoJSON ('geojson'), SHP ('shp') and GeoPackage ('gpkg') | 'gpkg' |
 
@@ -45,23 +47,23 @@ The help is displayed with `java -jar GeoDiff.jar -h` command.
 
 The program produces the following datasets:
 
-- **geodiff** dataset containing the changes between both versions in [GeoDiff format](/geodiff_format).
+- **geodiff** dataset containing the differences between both versions in [GeoDiff format](/geodiff_format).
 
 <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/geodiff/img/geodiff.png" height="250" /></kbd>
 
-- **geomdiff1** dataset containing a set of linear features representing the [Hausdorf segments](https://en.wikipedia.org/wiki/Hausdorff_distance) between the two versions of the geometries. This segment represents the place where the geometrical change between the two versions is maximum. Its length is a good measure for the change magnitude.
+- **geomdiff1** dataset containing a set of linear features representing the [Hausdorf segments](https://en.wikipedia.org/wiki/Hausdorff_distance) between the two versions of the geometries. This segment represents the place where the geometrical difference between the two versions is maximum. Its length is a good measure for the difference magnitude.
 
 <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/geodiff/img/hausdorf_segment.png" height="150" /></kbd>
 
-(Initial version in gray - Final version blue outline - Corresponding Hausdorf segment in purple)
+(First version in gray - Second version blue outline - Corresponding Hausdorf segment in purple)
 
-- **geomdiff2** dataset containing features representing the spatial gains and losses between the two versions of the geometries. Gains are labeled with an attribute *change* set to *I*, and losses are labeled with *D* value.
+- **geomdiff2** dataset containing features representing the spatial gains and losses between the two versions of the geometries. Gains are labeled with an attribute *GeoDiff* set to *I*, and losses are labeled with *D* value.
 
 <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/geodiff/img/geomch.png" height="150" /></kbd>
 
 (Geometry gains in green, losses in red)
 
-- **idstab** dataset: The stability of the identifier between two versions of a feature might not be respected, by mistake. This leads to the detection of superfluous pairs (deletion, insertion) of the same feature, which do not reflect genuine changes of the dataset. In general, a pair (deletion, insertion) is not considered as pertinent when both feature versions are the same (or have very similar geometries), but their identifier has changed. This datasets contains the change features representing these superflous (deletion, insertion) pairs. Those pairs could be either removed if both feature versions are exactly the same, or replaced with a change if these versions are similar. The parameter *res* indicates the distance threshold to decide when the geometries are too similar to be considered as representing totally different entities.
+- **idstab** dataset: The stability of the identifier between two versions of a feature might not be respected, by mistake. This leads to the detection of superfluous pairs (deletion, insertion) of the same feature, which do not reflect genuine differences of the dataset. In general, a pair (deletion, insertion) is not considered as pertinent when both feature versions are the same (or have very similar geometries), but their identifier is different. This datasets contains the difference features representing these superflous (deletion, insertion) pairs. Those pairs could either be removed if both feature versions are exactly the same, or replaced with a difference if these versions are similar. The parameter *res* indicates the distance threshold to decide when the geometries are too similar to be considered as representing totally different entities.
 
 <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/geodiff/img/id_stab_issues.png" width="250" /></kbd>
 
@@ -79,8 +81,9 @@ The help is displayed with `java -jar GeoDiff.jar -h` command.
 | Parameter | Required | Description | Default value |
 | ------------- | ------------- |-------------| ------|
 | -h | | Show the help message |  |
-| -v1 | * | Dataset in its initial state. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
-| -c | * | The changes/updates to apply to the dataset, in GeoDiff format. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). | changes.gpkg |
+| -m | | Set to 'up' for update mode. |  |
+| -d | x | Dataset in its initial state. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
+| -c | x | The changes/updates to apply to the dataset, in GeoDiff format. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
 | -o |  | Output updated dataset. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). | out.gpkg |
 
 ### Output
