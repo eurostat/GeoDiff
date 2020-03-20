@@ -160,7 +160,7 @@ public class GeoDiffJarMain {
 			System.out.println("Compute differences...");
 
 			//set identifiers
-			//TODO: check identifiers are there and are real identifiers?
+			//TODO: check identifiers are there, and are real identifiers?
 			FeatureUtil.setId(fs1, id);
 			FeatureUtil.setId(fs2, id);
 
@@ -168,7 +168,7 @@ public class GeoDiffJarMain {
 			DifferenceDetection geoDiff = new DifferenceDetection(fs1, fs2, resolution);
 
 			//set attributes to ignore
-			//TODO check both versions have the same schema - if not, ignore attributes (?)
+			//TODO check both versions have the same schema - if not, ignore different attributes
 			if(attributesToIgnore != null)
 				geoDiff.setAttributesToIgnore(attributesToIgnore);
 
