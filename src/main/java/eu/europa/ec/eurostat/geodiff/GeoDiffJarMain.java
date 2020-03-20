@@ -35,13 +35,13 @@ public class GeoDiffJarMain {
 		//common options
 		options.addOption(Option.builder("m").longOpt("mode").desc("For difference analysis, set to 'diff'. For update mode, set to 'up'")
 				.hasArg().argName("value").build());
+		options.addOption(Option.builder("id").longOpt("identifier").desc("Optional. Name of the identifier field of the dataset. Default: 'id'.")
+				.hasArg().argName("file path").build());
 
 		//options for difference analysis mode
 		options.addOption(Option.builder("v1").longOpt("version1").desc("Version 1 of the dataset. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension).")
 				.hasArg().argName("file path").build());
 		options.addOption(Option.builder("v2").longOpt("version2").desc("Version 2 of the dataset. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension).")
-				.hasArg().argName("file path").build());
-		options.addOption(Option.builder("id").longOpt("identifier").desc("Optional. Name of the identifier field of the dataset. Default: 'id'.")
 				.hasArg().argName("file path").build());
 		options.addOption(Option.builder("res").longOpt("resolution").desc("Optional. The geometrical resolution of the dataset. Geometrical differences below this value will be ignored. Default: 0.")
 				.hasArg().argName("value").build());
@@ -89,6 +89,10 @@ public class GeoDiffJarMain {
 			return;			
 		}
 
+		//id
+		String id = cmd.getOptionValue("id");
+		if(id == null) id = "id";
+
 		//difference analysis case
 		if("diff".equals(param)) {
 
@@ -118,10 +122,6 @@ public class GeoDiffJarMain {
 			}
 			System.out.println("   " + fs2.size() + " features loaded.");
 
-			//id
-			String id = cmd.getOptionValue("id");
-			if(id == null) id = "id";
-
 			//res
 			double resolution = -1;
 			param = cmd.getOptionValue("res");
@@ -134,6 +134,7 @@ public class GeoDiffJarMain {
 				}
 
 			//attributesToIgnore
+			//TODO test that
 			String[] attributesToIgnore = null;
 			param = cmd.getOptionValue("ati");
 			if(param != null && !"".equals(param)) {
@@ -227,6 +228,20 @@ public class GeoDiffJarMain {
 				return;
 			}
 			System.out.println("   " + changes.size() + " changes loaded.");
+
+			//check identifiers
+			if(! fs.iterator().next().getAttributes().keySet().contains(id)) {
+				System.err.println("Could not find identifier attribute " + id + " in input dataset.");
+				return;
+			}
+			if(! changes.iterator().next().getAttributes().keySet().contains(id)) {
+				System.err.println("Could not find identifier attribute " + id + " in input geodiff dataset.");
+				return;
+			}
+
+			//set identifiers
+			FeatureUtil.setId(fs, id);
+			FeatureUtil.setId(changes, id);
 
 			System.out.println("Apply changes...");
 			DifferenceDetection.applyChanges(fs, changes);

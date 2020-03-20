@@ -14,26 +14,23 @@ public class GeoDiffJarMainTest extends TestCase {
 
 	public void test() {
 		for(String gt : new String[] {"surf","lin","pt"})
-			GeoDiffJarMain.main(new String[] {"-m", "diff", "-v1", "src/test/resources/ini_"+gt+".gpkg", "-v2", "src/test/resources/fin_"+gt+".gpkg", "-o", "target/testout/test_"+gt+"/"});
+			GeoDiffJarMain.main(new String[] {"-m", "diff", "-v1", "src/test/resources/ini_"+gt+".gpkg", "-v2", "src/test/resources/fin_"+gt+".gpkg", "-o", "target/testout_diff/test_"+gt+"/"});
 	}
 
 	public void testRes() {
 		for(String gt : new String[] {"surf"})
-			GeoDiffJarMain.main(new String[] {"-m", "diff", "-v1", "src/test/resources/ini_"+gt+".gpkg", "-v2", "src/test/resources/fin_"+gt+".gpkg", "-o", "target/testout/test_res_"+gt+"/", "-res", "50"});
+			GeoDiffJarMain.main(new String[] {"-m", "diff", "-v1", "src/test/resources/ini_"+gt+".gpkg", "-v2", "src/test/resources/fin_"+gt+".gpkg", "-o", "target/testout_diff/test_res_"+gt+"/", "-res", "50"});
 	}
 
 	public void testOutFormat() {
-		for(String gt : new String[] {"surf","lin","pt"}) {
-			GeoDiffJarMain.main(new String[] {"-m", "diff", "-v1", "src/test/resources/ini_"+gt+".gpkg", "-v2", "src/test/resources/fin_"+gt+".gpkg", "-o", "target/testout/test_of_"+gt+"/", "-of", "gpkg"});
-			GeoDiffJarMain.main(new String[] {"-m", "diff", "-v1", "src/test/resources/ini_"+gt+".gpkg", "-v2", "src/test/resources/fin_"+gt+".gpkg", "-o", "target/testout/test_of_"+gt+"/", "-of", "shp"});
-			GeoDiffJarMain.main(new String[] {"-m", "diff", "-v1", "src/test/resources/ini_"+gt+".gpkg", "-v2", "src/test/resources/fin_"+gt+".gpkg", "-o", "target/testout/test_of_"+gt+"/", "-of", "geojson"});
-		}
+		for(String gt : new String[] {"surf","lin","pt"})
+			for(String of : new String[] {"gpkg","shp","geojson"})
+				GeoDiffJarMain.main(new String[] {"-m", "diff", "-v1", "src/test/resources/ini_"+gt+".gpkg", "-v2", "src/test/resources/fin_"+gt+".gpkg", "-o", "target/testout_diff/test_of_"+gt+"/", "-of", of});
 	}
 
 	public void testUpdateMode() {
-		for(String gt : new String[] {"surf","lin","pt"}) {
-			GeoDiffJarMain.main(new String[] {"-m", "up", "-d", "src/test/resources/ini_"+gt+".gpkg", "-c", "src/test/resources/geodiff_"+gt+".gpkg"});
-		}
+		for(String gt : new String[] {"surf","lin","pt"})
+			GeoDiffJarMain.main(new String[] {"-m", "up", "-d", "src/test/resources/ini_"+gt+".gpkg", "-c", "src/test/resources/geodiff_"+gt+".gpkg", "-o", "target/testout_up/test_"+gt+".gpkg"});
 	}
 
 }

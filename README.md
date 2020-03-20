@@ -84,6 +84,7 @@ The help is displayed with `java -jar GeoDiff.jar -h` command.
 | -m | | Set to 'up' for update mode. |  |
 | -d | x | Dataset in its initial state. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
 | -c | x | The changes/updates to apply to the dataset, in GeoDiff format. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
+| -id |  | Name of the identifier field. | 'id' |
 | -o |  | Output updated dataset. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). | out.gpkg |
 
 ### Output
