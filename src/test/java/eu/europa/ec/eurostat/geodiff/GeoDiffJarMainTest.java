@@ -1,5 +1,9 @@
 package eu.europa.ec.eurostat.geodiff;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
+
+import eu.europa.ec.eurostat.jgiscotools.geodiff.DifferenceDetection;
 import junit.framework.TestCase;
 
 /**
@@ -29,6 +33,7 @@ public class GeoDiffJarMainTest extends TestCase {
 	}
 
 	public void testUpdateMode() {
+		Configurator.setLevel(DifferenceDetection.class.getName(), Level.OFF);
 		for(String gt : new String[] {"surf","lin","pt"})
 			GeoDiffJarMain.main(new String[] {"-m", "up", "-d", "src/test/resources/ini_"+gt+".gpkg", "-c", "src/test/resources/geodiff_"+gt+".gpkg", "-o", "target/testout_up/test_"+gt+".gpkg"});
 	}

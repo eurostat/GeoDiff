@@ -241,7 +241,7 @@ public class GeoDiffJarMain {
 
 			//set identifiers
 			FeatureUtil.setId(fs, id);
-			FeatureUtil.setId(changes, id);
+			FeatureUtil.setId(changes, "ch_id");
 
 			System.out.println("Apply changes...");
 			DifferenceDetection.applyChanges(fs, changes);
