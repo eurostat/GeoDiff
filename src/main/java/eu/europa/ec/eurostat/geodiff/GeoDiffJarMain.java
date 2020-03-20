@@ -16,6 +16,7 @@ import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.geodiff.DifferenceDetection;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
+import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 
 /**
  * @author julien Gaffuri
@@ -32,11 +33,13 @@ public class GeoDiffJarMain {
 		Options options = new Options();
 
 		//common options
-		options.addOption(Option.builder("v1").longOpt("version1").desc("Input file containing the version 1 of the dataset. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension).")
-				.hasArg().argName("file path").build());
+		options.addOption(Option.builder("m").longOpt("mode").desc("For difference analysis, set to 'diff'. For update mode, set to 'up'")
+				.hasArg().argName("value").build());
 
 		//options for difference analysis mode
-		options.addOption(Option.builder("v2").longOpt("version2").desc("Input file containing the version 2 of the dataset. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension).")
+		options.addOption(Option.builder("v1").longOpt("version1").desc("Version 1 of the dataset. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension).")
+				.hasArg().argName("file path").build());
+		options.addOption(Option.builder("v2").longOpt("version2").desc("Version 2 of the dataset. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension).")
 				.hasArg().argName("file path").build());
 		options.addOption(Option.builder("id").longOpt("identifier").desc("Optional. Name of the identifier field of the dataset. Default: 'id'.")
 				.hasArg().argName("file path").build());
@@ -48,7 +51,9 @@ public class GeoDiffJarMain {
 				.hasArg().argName("file path").build());
 
 		//options for update mode
-		options.addOption(Option.builder("c").longOpt("geoDiffFile").desc("The changes/updates to apply, in GeoDiff format. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension). Default: 'changes.gpkg'.")
+		options.addOption(Option.builder("d").longOpt("dataset").desc("Initial version of the dataset. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension).")
+				.hasArg().argName("file path").build());
+		options.addOption(Option.builder("c").longOpt("geoDiffFile").desc("Optional. The changes/updates to apply, in GeoDiff format. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension). Default: 'changes.gpkg'.")
 				.hasArg().argName("file path").build());
 		options.addOption(Option.builder("o").longOpt("outputFile").desc("Optional. Output file with changes applied. The supported formats are GeoJSON (*.geojson extension), SHP (*.shp extension) and GeoPackage (*.gpkg extension). Default: 'out.gpkg'.")
 				.hasArg().argName("file path").build());
@@ -71,42 +76,47 @@ public class GeoDiffJarMain {
 
 		String param;
 
-		//v1
-		System.out.println("Loading dataset version 1...");
-		param = cmd.getOptionValue("v1");
-		ArrayList<Feature> fs1 = null;
-		try {
-			fs1 = GeoData.getFeatures(param);
-		} catch (Exception e) {
-			e.printStackTrace();
+		//get mode
+		param = cmd.getOptionValue("m");
+		if(param == null) {
+			System.err.println("Mode should be specified. 'diff' for difference analysis mode, 'up' for update mode.");
 			return;
 		}
-		System.out.println("   " + fs1.size() + " features loaded.");
-
-		//crs
-		CoordinateReferenceSystem crs = null;
-		try {
-			crs = GeoData.getCRS(param);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
+		if(! "diff".equals(param) && ! "up".equals(param)) {
+			System.err.println("Unexpected mode: " + param + ". Mode parameter should be 'diff' for difference analysis mode or 'up' for update mode.");
+			return;			
 		}
 
-		//v2
-		param = cmd.getOptionValue("v2");
-		if(param != null) {
-			//difference analysis case
+		//difference analysis case
+		if("diff".equals(param)) {
+
+			//v1
+			System.out.println("Loading dataset version 1...");
+			param = cmd.getOptionValue("v1");
+			ArrayList<Feature> fs1 = null;
+			try {
+				fs1 = GeoData.getFeatures(param);
+			} catch (Exception e) {
+				System.err.println("Could not load data from " + param);
+				System.err.println(e.getMessage());
+				return;
+			}
+			System.out.println("   " + fs1.size() + " features loaded.");
+
+			//v2
 			System.out.println("Loading dataset version 2...");
+			param = cmd.getOptionValue("v2");
 			ArrayList<Feature> fs2 = null;
 			try {
 				fs2 = GeoData.getFeatures(param);
 			} catch (Exception e) {
-				e.printStackTrace();
+				System.err.println("Could not load data from " + param);
+				System.err.println(e.getMessage());
 				return;
 			}
 			System.out.println("   " + fs2.size() + " features loaded.");
 
-			//TODO check both have the same schema
+			//TODO check both have the same schema (?)
 			//TODO add attributes to ignore as a parameter
 
 			//id
@@ -121,7 +131,7 @@ public class GeoDiffJarMain {
 					resolution = Double.parseDouble(param);
 				} catch (Exception e) {
 					System.err.println("Failed reading parameter 'res'. The default value will be used.");
-					e.printStackTrace();
+					System.err.println(e.getMessage());
 				}
 
 			//output folder
@@ -143,32 +153,46 @@ public class GeoDiffJarMain {
 			System.out.println("Compute differences...");
 
 			//set identifiers
+			//TODO: check identifiers are there and are real identifiers?
 			FeatureUtil.setId(fs1, id);
 			FeatureUtil.setId(fs2, id);
 
 			//build geoDiff object
 			DifferenceDetection geoDiff = new DifferenceDetection(fs1, fs2, resolution);
 
+			//crs
+			CoordinateReferenceSystem crs = null;
 			try {
-				System.out.println(geoDiff.getDifferences().size() + " differences found.");
-				System.out.println("Save...");
-
-				GeoData.save(geoDiff.getDifferences(), outFolder + File.separator + "geodiff." + outputFileFormat, crs);
-				GeoData.save(geoDiff.getHausdorffGeomDifferences(), outFolder + File.separator + "geomdiff1." + outputFileFormat, crs);
-				GeoData.save(geoDiff.getGeomDifferences(), outFolder + File.separator + "geomdiff2." + outputFileFormat, crs);
-				GeoData.save(DifferenceDetection.findIdStabilityIssues(geoDiff.getDifferences(), resolution), outFolder + File.separator + "idstab." + outputFileFormat, crs);
+				crs = GeoData.getCRS(cmd.getOptionValue("v1"));
 			} catch (Exception e) {
-				e.printStackTrace();
+				System.err.println("Could not retrieve CRS from " + cmd.getOptionValue("v1") + ". Use default CRS (EPSG:4326).");
+				System.err.println(e.getMessage());
+				crs = ProjectionUtil.getWGS_84_CRS();
 			}
 
-		} else {
-			param = cmd.getOptionValue("c");
-			//change application case
+			System.out.println(geoDiff.getDifferences().size() + " differences found.");
+			System.out.println("Save...");
+			GeoData.save(geoDiff.getDifferences(), outFolder + File.separator + "geodiff." + outputFileFormat, crs);
+			GeoData.save(geoDiff.getHausdorffGeomDifferences(), outFolder + File.separator + "geomdiff1." + outputFileFormat, crs);
+			GeoData.save(geoDiff.getGeomDifferences(), outFolder + File.separator + "geomdiff2." + outputFileFormat, crs);
+			GeoData.save(DifferenceDetection.findIdStabilityIssues(geoDiff.getDifferences(), resolution), outFolder + File.separator + "idstab." + outputFileFormat, crs);
+		}
 
-			if(param == null) {
-				System.err.println("Missing parameter: -v2 or -c.");
+		//change application case
+		if("up".equals(param)) {
+
+			//dataset
+			System.out.println("Loading dataset...");
+			param = cmd.getOptionValue("d");
+			ArrayList<Feature> fs = null;
+			try {
+				fs = GeoData.getFeatures(param);
+			} catch (Exception e) {
+				System.err.println("Could not load data from " + param);
+				System.err.println(e.getMessage());
 				return;
 			}
+			System.out.println("   " + fs.size() + " features loaded.");
 
 			//get changes dataset
 			System.out.println("Loading changes...");
@@ -177,25 +201,31 @@ public class GeoDiffJarMain {
 			try {
 				changes = GeoData.getFeatures(param);
 			} catch (Exception e) {
-				e.printStackTrace();
+				System.err.println("Could not load change data from " + param);
+				System.err.println(e.getMessage());
 				return;
 			}
 			System.out.println("   " + changes.size() + " changes loaded.");
 
 			System.out.println("Apply changes...");
-			DifferenceDetection.applyChanges(fs1, changes);
+			DifferenceDetection.applyChanges(fs, changes);
 
 			//output file
 			String outputFile = cmd.getOptionValue("o");
 			if(outputFile == null) outputFile = Paths.get("").toAbsolutePath().toString() + "/out.gpkg";
 
-			System.out.println("Save...");
+			//crs
+			CoordinateReferenceSystem crs = null;
 			try {
-				GeoData.save(fs1, outputFile, crs);
+				crs = GeoData.getCRS(cmd.getOptionValue("d"));
 			} catch (Exception e) {
-				e.printStackTrace();
+				System.err.println("Could not retrieve CRS from " + cmd.getOptionValue("d") + ". Use default CRS (EPSG:4326).");
+				System.err.println(e.getMessage());
+				crs = ProjectionUtil.getWGS_84_CRS();
 			}
 
+			System.out.println("Save...");
+			GeoData.save(fs, outputFile, crs);
 		}
 
 	}
