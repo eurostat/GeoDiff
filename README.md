@@ -37,7 +37,7 @@ The help is displayed with `java -jar GeoDiff.jar -h` command.
 | Parameter | Required | Description | Default value |
 | ------------- | ------------- |-------------| ------|
 | -h | | Show the help message |  |
-| -m | | Set to 'diff' for difference anaysis mode. |  |
+| -m | x | Set to 'diff' for difference anaysis mode. |  |
 | -v1 | x | First version of the dataset. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
 | -v2 | x | Second version of the dataset. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
 | -id |  | Name of the identifier field. | 'id' |
@@ -84,7 +84,7 @@ The help is displayed with `java -jar GeoDiff.jar -h` command.
 | Parameter | Required | Description | Default value |
 | ------------- | ------------- |-------------| ------|
 | -h | | Show the help message |  |
-| -m | | Set to 'up' for update mode. |  |
+| -m | x | Set to 'up' for update mode. |  |
 | -d | x | Dataset in its initial state. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
 | -c | x | The changes/updates to apply to the dataset, in GeoDiff format. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
 | -id |  | Name of the identifier field. | 'id' |
