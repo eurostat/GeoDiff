@@ -1,4 +1,4 @@
-# GeoDiff format specifications
+# GeoDiff format specification
 
 version: 0.1
 
