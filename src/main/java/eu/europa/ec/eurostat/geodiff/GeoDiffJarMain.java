@@ -238,6 +238,10 @@ public class GeoDiffJarMain {
 				System.err.println("Could not find identifier attribute " + id + " in input geodiff dataset.");
 				return;
 			}
+			if(! changes.iterator().next().getAttributes().keySet().contains("ch_id")) {
+				System.err.println("Could not find identifier attribute ch_id in input geodiff dataset.");
+				return;
+			}
 
 			//set identifiers
 			FeatureUtil.setId(fs, id);
