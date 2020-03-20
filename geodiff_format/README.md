@@ -1,36 +1,37 @@
-# GeoDiff format
+# GeoDiff format specifications
 
 version: 0.1
 
-These are the specifications of the GeoDiff format.
-
-The GeoDiff format represents differences between versions of a vector geospatial dataset. GeoDiff data can be used to represent updates of a dataset. It is assumed that the dataset structure does not change between the two versions; only the content changes. The type of changes supported are thus:
-- Insertion of features
-- Deletion of features 
-- Changes of features (geometries and/or attribute values)
+The GeoDiff format represents differences between two versions of a vector geospatial dataset. GeoDiff data can be used to store and share updates of a dataset. It is assumed that the dataset structure does not change between the two versions; only the content changes. The type of changes supported are thus:
+- Insertion of features,
+- Deletion of features,
+- Modification of features (geometries and/or attribute values)
 
 ## Structure
 
-TODO
+- A GeoDiff file describes only the features that have been *inserted*, *deleted* or *modified*. Unchanged features are not described.
 
-Same as the structure of the dataset, with additional attribute *change*.
+- A GeoDiff file has the same structure as the dataset (geometry type, attribute names and types, identifier), with an additional attribute **GeoDiff**.
 
-
-- Features that have been **deleted** (attribute *change* set to *D*)
-- Features that have been **inserted** (attribute *change* set to *I*)
-- Features that have been **modified**,
-   * Either their geometry (attribute *change* set to *G*)
-   * or some attribute values (attribute *change* set to *An* where *n* is the number of modified attributes)
-   * or both (attribute *change* set to *GAn*)
+Each instance represents:
+- Either an **inserted** feature. For this case, the geometry and attribute values must be specified. The *GeoDiff* attribute must be set to *I*,
+- Or a **deleted** feature. For this case, geometry and attribute values are not required. The *GeoDiff* attribute must be set to *D*,
+- Or a **Modified** feature. For this case, modified elements (geometry and/or attribute values) must be specified. The other unchanged elements are not required. The *GeoDiff* attribute must be set to:
+   * *g* if the geometry only was modified,
+   * *An* if attribute values only were modified (*n* is the number of modified attributes. *n* is optional) and not the geometry,
+   * *GAn* if both the geometry and attribute values were modified.
 
 ## Encodings
 
-TODO
+GeoDiff format does not require any specific encodings.
 
-## Examples
-
-TODO
+Any vector geospatial format allowing to represent geographical features can be used. Possible encodings are: [GeoPackage](https://www.geopackage.org/), [Shapefile](https://en.wikipedia.org/wiki/Shapefile), [GeoJSON](https://geojson.org/).
 
 ## Implementations
 
-TODO
+- [Eurostat/GeoDiff](https://github.com/eurostat/GeoDiff)
+- ...
+
+## Contribution
+
+For any suggestion, feel free to [start a discussion](https://github.com/eurostat/GeoDiff/issues/new).
