@@ -27,6 +27,10 @@ GeoDiff format does not require any specific encodings.
 
 Any vector geospatial format allowing to represent geographical features can be used. Possible encodings are: [GeoPackage](https://www.geopackage.org/), [Shapefile](https://en.wikipedia.org/wiki/Shapefile), [GeoJSON](https://geojson.org/).
 
+## Example
+
+<kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/geodiff/img/v1.png" width="200" /></kbd> **+** <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/geodiff/img/v2.png" width="200" /></kbd> **=** <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/geodiff/img/geodiff.png" width="200" /></kbd>
+
 ## Implementations
 
 - [Eurostat/GeoDiff](https://github.com/eurostat/GeoDiff)
@@ -34,4 +38,4 @@ Any vector geospatial format allowing to represent geographical features can be 
 
 ## Contribution
 
-For any suggestion, feel free to [start a discussion](https://github.com/eurostat/GeoDiff/issues/new).
+For any suggestion, feel free to [start a discussion](https://github.com/eurostat/GeoDiff/issues/new) or edit this page.
