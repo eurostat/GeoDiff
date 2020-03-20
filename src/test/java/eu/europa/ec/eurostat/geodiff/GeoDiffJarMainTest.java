@@ -12,17 +12,17 @@ public class GeoDiffJarMainTest extends TestCase {
 		junit.textui.TestRunner.run(GeoDiffJarMainTest.class);
 	}
 
-	public void test() throws Exception {
+	public void test() {
 		for(String gt : new String[] {"surf","lin","pt"})
 			GeoDiffJarMain.main(new String[] {"-m", "diff", "-v1", "src/test/resources/ini_"+gt+".gpkg", "-v2", "src/test/resources/fin_"+gt+".gpkg", "-o", "target/testout/test_"+gt+"/"});
 	}
 
-	public void testRes() throws Exception {
+	public void testRes() {
 		for(String gt : new String[] {"surf"})
 			GeoDiffJarMain.main(new String[] {"-m", "diff", "-v1", "src/test/resources/ini_"+gt+".gpkg", "-v2", "src/test/resources/fin_"+gt+".gpkg", "-o", "target/testout/test_res_"+gt+"/", "-res", "50"});
 	}
 
-	public void testOutFormat() throws Exception {
+	public void testOutFormat() {
 		for(String gt : new String[] {"surf","lin","pt"}) {
 			GeoDiffJarMain.main(new String[] {"-m", "diff", "-v1", "src/test/resources/ini_"+gt+".gpkg", "-v2", "src/test/resources/fin_"+gt+".gpkg", "-o", "target/testout/test_of_"+gt+"/", "-of", "gpkg"});
 			GeoDiffJarMain.main(new String[] {"-m", "diff", "-v1", "src/test/resources/ini_"+gt+".gpkg", "-v2", "src/test/resources/fin_"+gt+".gpkg", "-o", "target/testout/test_of_"+gt+"/", "-of", "shp"});
@@ -30,6 +30,10 @@ public class GeoDiffJarMainTest extends TestCase {
 		}
 	}
 
-	//TODO test update mode
+	public void testUpdateMode() {
+		for(String gt : new String[] {"surf","lin","pt"}) {
+			GeoDiffJarMain.main(new String[] {"-m", "up", "-d", "src/test/resources/ini_"+gt+".gpkg", "-c", "src/test/resources/geodiff_"+gt+".gpkg"});
+		}
+	}
 
 }
