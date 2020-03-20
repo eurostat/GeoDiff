@@ -75,7 +75,7 @@ The program produces the following datasets:
 
 ## Update mode
 
-This mode applies updates to a vector geospatial dataset. The updates are specified in a *geodiff* file.
+This mode applies updates to a vector geospatial dataset. The updates are specified in a [GeoDiff](/geodiff_format) file.
 
 ### Input parameters
 
@@ -86,7 +86,7 @@ The help is displayed with `java -jar GeoDiff.jar -h` command.
 | -h | | Show the help message |  |
 | -m | x | Set to 'up' for update mode. |  |
 | -d | x | Dataset in its initial state. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
-| -c | x | The changes/updates to apply to the dataset, in GeoDiff format. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
+| -c | x | The changes/updates to apply to the dataset, in [GeoDiff format](/geodiff_format). The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
 | -id |  | Name of the identifier field. | 'id' |
 | -o |  | Output updated dataset. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). | out.gpkg |
 
