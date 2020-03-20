@@ -159,8 +159,17 @@ public class GeoDiffJarMain {
 
 			System.out.println("Compute differences...");
 
+			//check identifiers
+			if(! fs1.iterator().next().getAttributes().keySet().contains(id)) {
+				System.err.println("Could not find identifier attribute " + id + " in input dataset v1.");
+				return;
+			}
+			if(! fs2.iterator().next().getAttributes().keySet().contains(id)) {
+				System.err.println("Could not find identifier attribute " + id + " in input dataset v2.");
+				return;
+			}
+
 			//set identifiers
-			//TODO: check identifiers are there, and are real identifiers?
 			FeatureUtil.setId(fs1, id);
 			FeatureUtil.setId(fs2, id);
 
