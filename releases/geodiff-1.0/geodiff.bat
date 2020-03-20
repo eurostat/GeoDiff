@@ -1,1 +1,1 @@
-java -jar GeoDiff.jar -ini test/dataset_initial.gpkg -fin test/dataset_final.gpkg -o out/
+java -jar GeoDiff.jar -m diff -v1 test/dataset_initial.gpkg -v2 test/dataset_final.gpkg
