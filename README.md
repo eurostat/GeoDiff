@@ -4,7 +4,7 @@
 - extracting the differences between two versions of a vector geospatial dataset.
 - applying changes/updates to a vector geospatial dataset.
 
-Both utilisation modes relay on the [GeoDiff format](/geodiff_format).
+Both utilisation modes are based on the [GeoDiff format](/geodiff_format).
 
 **Difference analysis mode**
 
