@@ -15,13 +15,13 @@ It is assumed that:
 
 - A GeoDiff file describes only the features that have been *inserted*, *deleted* or *modified*. Unchanged features are not described.
 
-- A GeoDiff file has the same structure as the dataset (geometry type, attribute names and types, identifier), with two additional attributes: **GeoDiff** and **ch_id**.
+- A GeoDiff file has the same structure as the dataset it relates to (geometry type, attribute names and types, identifier), with an additional attributes named: **GeoDiff**.
 
 Each instance represents:
-- Either an **inserted** feature. For this case, the geometry and attribute values must be specified. The *GeoDiff* attribute must be set to *I*. The *ch_id* attribute is set to the identifier of the inserted feature.
-- Or a **deleted** feature. For this case, geometry and attribute values are not required. The *GeoDiff* attribute must be set to *D*. The *ch_id* attribute is set to the identifier of the deleted feature.
-- Or a **Modified** feature. For this case, modified elements (geometry and/or attribute values) must be specified. The other unchanged elements are not required. The *ch_id* attribute is set to the identifier of the modified feature. The *GeoDiff* attribute must be set to:
-   * *g* if the geometry only was modified,
+- Either an **inserted** feature. For this case, the geometry and attribute values must be specified. The *GeoDiff* attribute must be set to *I*.
+- Or a **deleted** feature. For this case, geometry and attribute values are not required. The *GeoDiff* attribute must be set to *D*.
+- Or a **Modified** feature. For this case, modified elements (geometry and/or attribute values) must be specified. The other unchanged elements are not required. The *GeoDiff* attribute must be set to:
+   * *G* if the geometry only was modified,
    * *An* if attribute values only were modified (*n* is the number of modified attributes. *n* is optional) and not the geometry,
    * *GAn* if both the geometry and attribute values were modified.
 
@@ -29,7 +29,7 @@ Each instance represents:
 
 GeoDiff format does not require any specific encodings.
 
-Any vector geospatial format allowing to represent geographical features can be used. Possible encodings are: [GeoPackage](https://www.geopackage.org/), [Shapefile](https://en.wikipedia.org/wiki/Shapefile), [GeoJSON](https://geojson.org/).
+Any vector geospatial format can be used. Possible encodings are: [GeoPackage](https://www.geopackage.org/), [Shapefile](https://en.wikipedia.org/wiki/Shapefile), [GeoJSON](https://geojson.org/).
 
 ## Example
 
