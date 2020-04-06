@@ -1,11 +1,15 @@
 # GeoDiff format specification
 
-version: 0.1
+version: 0.9.1
 
-The GeoDiff format represents differences between two versions of a vector geospatial dataset. GeoDiff data can be used to store and share updates of a dataset. It is assumed that the dataset structure does not change between the two versions; only the content changes. The type of changes supported are thus:
-- Insertion of features,
+The GeoDiff format represents differences between two versions of a vector geospatial dataset. GeoDiff data can expecially be used to store and share dataset updates. The type of changes supported are thus:
+- Insertion of new features,
 - Deletion of features,
 - Modification of features (geometries and/or attribute values)
+
+It is assumed that:
+- the dataset structure does not change between the two versions; only the content changes.
+- the dataset features have an identifier, which is stable between the versions. This means that features which do not change or change only slightly between both versions should keep the same identifier value.
 
 ## Structure
 
