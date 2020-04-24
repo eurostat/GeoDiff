@@ -10,13 +10,13 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.geotools.referencing.CRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
 import eu.europa.ec.eurostat.jgiscotools.geodiff.DifferenceDetection;
 import eu.europa.ec.eurostat.jgiscotools.io.GeoData;
-import eu.europa.ec.eurostat.jgiscotools.util.ProjectionUtil;
 
 /**
  * @author julien Gaffuri
@@ -189,7 +189,7 @@ public class GeoDiffJarMain {
 			} catch (Exception e) {
 				System.err.println("Could not retrieve CRS from " + cmd.getOptionValue("v1") + ". Use default CRS (EPSG:4326).");
 				System.err.println(e.getMessage());
-				crs = ProjectionUtil.getWGS_84_CRS();
+				crs = getCRSWGS84();
 			}
 
 			System.out.println(geoDiff.getDifferences().size() + " differences found.");
@@ -261,13 +261,22 @@ public class GeoDiffJarMain {
 			} catch (Exception e) {
 				System.err.println("Could not retrieve CRS from " + cmd.getOptionValue("d") + ". Use default CRS (EPSG:4326).");
 				System.err.println(e.getMessage());
-				crs = ProjectionUtil.getWGS_84_CRS();
+				crs = getCRSWGS84();
 			}
 
 			System.out.println("Save...");
 			GeoData.save(fs, outputFile, crs);
 		}
 
+	}
+
+	private static CoordinateReferenceSystem CRSWGS84 = null;
+	private static CoordinateReferenceSystem getCRSWGS84() {
+		if(CRSWGS84 == null)
+			try {
+				CRSWGS84 = CRS.decode("EPSG:4326");
+			} catch (Exception e) { e.printStackTrace(); }
+		return CRSWGS84;
 	}
 
 }
