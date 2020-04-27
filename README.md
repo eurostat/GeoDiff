@@ -8,11 +8,11 @@ Both utilisation modes are based on the [GeoDiff format](/geodiff_format).
 
 **Difference analysis mode**
 
-<kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/geodiff/img/v1.png" width="200" /></kbd> **+** <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/geodiff/img/v2.png" width="200" /></kbd> **=** <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/geodiff/img/geodiff.png" width="200" /></kbd>
+<kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/doc/geodiff/img/v1.png" width="200" /></kbd> **+** <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/doc/geodiff/img/v2.png" width="200" /></kbd> **=** <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/doc/geodiff/img/geodiff.png" width="200" /></kbd>
 
 **Update mode**
 
-<kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/geodiff/img/ini.png" width="200" /></kbd> **+** <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/geodiff/img/changes.png" width="200" /></kbd> **=** <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/geodiff/img/fin.png" width="200" /></kbd>
+<kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/doc/geodiff/img/ini.png" width="200" /></kbd> **+** <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/doc/geodiff/img/changes.png" width="200" /></kbd> **=** <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/doc/geodiff/img/fin.png" width="200" /></kbd>
 
 ## Quick start
 
