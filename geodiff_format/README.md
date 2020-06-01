@@ -33,7 +33,7 @@ Any vector geospatial format can be used. Possible encodings are: [GeoPackage](h
 
 ## Example
 
-<kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/geodiff/img/v1.png" width="200" /></kbd> **+** <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/geodiff/img/v2.png" width="200" /></kbd> **=** <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/src/site/geodiff/img/geodiff.png" width="200" /></kbd>
+<kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/doc/geodiff/img/ini.png" width="200" /></kbd> **+** <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/doc/geodiff/img/changes.png" width="200" /></kbd> **=** <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/doc/geodiff/img/fin.png" width="200" /></kbd>
 
 ## Implementations
 
