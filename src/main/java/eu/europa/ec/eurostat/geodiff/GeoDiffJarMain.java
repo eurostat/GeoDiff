@@ -15,7 +15,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
-import eu.europa.ec.eurostat.jgiscotools.geodiff.DifferenceDetection;
+import eu.europa.ec.eurostat.jgiscotools.geodiff.GeoDiff;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
 /**
@@ -175,7 +175,7 @@ public class GeoDiffJarMain {
 			FeatureUtil.setId(fs2, id);
 
 			//build geoDiff object
-			DifferenceDetection geoDiff = new DifferenceDetection(fs1, fs2, resolution);
+			GeoDiff geoDiff = new GeoDiff(fs1, fs2, resolution);
 
 			//set attributes to ignore
 			//TODO check both versions have the same schema - if not, ignore different attributes
@@ -197,7 +197,7 @@ public class GeoDiffJarMain {
 			GeoData.save(geoDiff.getDifferences(), outFolder + File.separator + "geodiff." + outputFileFormat, crs);
 			GeoData.save(geoDiff.getHausdorffGeomDifferences(), outFolder + File.separator + "geomdiff1." + outputFileFormat, crs);
 			GeoData.save(geoDiff.getGeomDifferences(), outFolder + File.separator + "geomdiff2." + outputFileFormat, crs);
-			GeoData.save(DifferenceDetection.findIdStabilityIssues(geoDiff.getDifferences(), resolution), outFolder + File.separator + "idstab." + outputFileFormat, crs);
+			GeoData.save(GeoDiff.findIdStabilityIssues(geoDiff.getDifferences(), resolution), outFolder + File.separator + "idstab." + outputFileFormat, crs);
 		}
 
 		//change application case
@@ -248,7 +248,7 @@ public class GeoDiffJarMain {
 			FeatureUtil.setId(changes, "ch_id");
 
 			System.out.println("Apply changes...");
-			DifferenceDetection.applyChanges(fs, changes);
+			GeoDiff.applyChanges(fs, changes);
 
 			//output file
 			String outputFile = cmd.getOptionValue("o");
