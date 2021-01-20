@@ -30,7 +30,7 @@ Java 1.8 or higher is required. The java version installed, if any, can be found
 
 ## Difference analysis mode
 
-This mode analyses differences between two versions of a vector geospatial dataset. It produces a [GeoDiff](/geodiff_format) file representing the differences between both datasets and some other information on these differences.
+This mode analyses differences between two versions of a vector geospatial dataset. It produces a [GeoDiff](/geodiff_format) file representing the differences between both dataset versions and some auxilary data describing these differences.
 
 ### Input parameters
 
