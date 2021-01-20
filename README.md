@@ -16,7 +16,7 @@ Both utilisation modes are based on the [GeoDiff format](/geodiff_format).
 
 ## Quick start
 
-- Download [geodiff-2.2.zip](releases/geodiff-2.2.zip?raw=true) and unzip somewhere.
+- Download and unzip [geodiff-2.2.zip](releases/geodiff-2.2.zip?raw=true).
 
 - To compute the difference between two versions of a dataset, run: `java -jar GeoDiff.jar -m diff -v1 pathTo/dataset_v1.gpkg -v2 pathTo/dataset_v2.gpkg -id identCol -o out/`. The result is stored in a new *out/* folder. *identCol* is the name of the identifier column in both datasets.
 
