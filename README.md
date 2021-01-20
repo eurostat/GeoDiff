@@ -1,8 +1,8 @@
 # GeoDiff
 
 [GeoDiff](https://github.com/eurostat/GeoDiff) allows: 
-- extracting the differences between two versions of a vector geospatial dataset.
-- applying changes/updates to a vector geospatial dataset.
+- Extracting the differences between two versions of a vector geospatial dataset.
+- Applying changes/updates to a vector geospatial dataset.
 
 Both utilisation modes are based on the [GeoDiff format](/geodiff_format).
 
@@ -18,7 +18,7 @@ Both utilisation modes are based on the [GeoDiff format](/geodiff_format).
 
 - Download [geodiff-2.2.zip](releases/geodiff-2.2.zip?raw=true) and unzip somewhere.
 
-- To compute the difference between two versions of a dataset, run: `java -jar GeoDiff.jar -m diff -v1 pathTo/dataset_initial.gpkg -v2 pathTo/dataset_final.gpkg -id identCol -o out/`. The result is stored in a new *out/* folder. *identCol* is the name of the identifier column in both datasets.
+- To compute the difference between two versions of a dataset, run: `java -jar GeoDiff.jar -m diff -v1 pathTo/dataset_v1.gpkg -v2 pathTo/dataset_v2.gpkg -id identCol -o out/`. The result is stored in a new *out/* folder. *identCol* is the name of the identifier column in both datasets.
 
 - To update a dataset with [GeoDiff](/geodiff_format) data, run: `java -jar GeoDiff.jar -m up -d pathTo/dataset.gpkg -c pathTo/geodiff.gpkg`. The updated dataset is stored in a new *out.gpkg* file.
 
