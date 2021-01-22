@@ -4,7 +4,7 @@
 - Extracting the differences between two versions of a vector geospatial dataset.
 - Applying changes/updates to a vector geospatial dataset.
 
-Both utilisation modes are based on the [GeoDiff format](/geodiff_format).
+Both utilisation modes are based on the [GeoDiff format](/geodiff_format/README.md).
 
 **Difference analysis mode**
 
@@ -20,7 +20,7 @@ Both utilisation modes are based on the [GeoDiff format](/geodiff_format).
 
 - To compute the difference between two versions of a dataset, run: `java -jar GeoDiff.jar -m diff -v1 pathTo/dataset_v1.gpkg -v2 pathTo/dataset_v2.gpkg -id identCol -o out/`. The result is stored in a new *out/* folder. *identCol* is the name of the identifier column in both datasets.
 
-- To update a dataset with [GeoDiff](/geodiff_format) data, run: `java -jar GeoDiff.jar -m up -d pathTo/dataset.gpkg -c pathTo/geodiff.gpkg`. The updated dataset is stored in a new *out.gpkg* file.
+- To update a dataset with [GeoDiff](/geodiff_format/README.md) data, run: `java -jar GeoDiff.jar -m up -d pathTo/dataset.gpkg -c pathTo/geodiff.gpkg`. The updated dataset is stored in a new *out.gpkg* file.
 
 You can alternativelly edit and execute *geodiff.bat* (or *geodiff.sh* for Linux users).
 
@@ -30,7 +30,11 @@ Java 1.8 or higher is required. The java version installed, if any, can be found
 
 ## Difference analysis mode
 
-This mode analyses differences between two versions of a vector geospatial dataset. It produces a [GeoDiff](/geodiff_format) file representing the differences between both dataset versions and some auxilary data describing these differences.
+This mode analyses differences between two versions of a vector geospatial dataset. It produces a [GeoDiff](/geodiff_
+
+
+
+) file representing the differences between both dataset versions and some auxilary data describing these differences.
 
 ### Input parameters
 
@@ -52,7 +56,7 @@ The help is displayed with `java -jar GeoDiff.jar -h` command.
 
 The program produces the following datasets:
 
-- **geodiff** dataset containing the differences between both versions in [GeoDiff format](/geodiff_format).
+- **geodiff** dataset containing the differences between both versions in [GeoDiff format](/geodiff_format/README.md).
 
 <kbd><img src="https://raw.githubusercontent.com/eurostat/JGiscoTools/master/doc/geodiff/img/geodiff.png" height="250" /></kbd>
 
@@ -77,7 +81,7 @@ The program produces the following datasets:
 
 ## Update mode
 
-This mode applies updates to a vector geospatial dataset. The updates are specified in a [GeoDiff](/geodiff_format) file.
+This mode applies updates to a vector geospatial dataset. The updates are specified in a [GeoDiff](/geodiff_format/README.md) file.
 
 ### Input parameters
 
@@ -88,7 +92,7 @@ The help is displayed with `java -jar GeoDiff.jar -h` command.
 | -h | | Show the help message |  |
 | -m | x | Set to 'up' for update mode. |  |
 | -d | x | Dataset in its initial state. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
-| -c | x | The changes/updates to apply to the dataset, in [GeoDiff format](/geodiff_format). The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
+| -c | x | The changes/updates to apply to the dataset, in [GeoDiff format](/geodiff_format/README.md). The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). |  |
 | -id |  | Name of the identifier field. | 'id' |
 | -o |  | Output updated dataset. The supported formats are GeoJSON (\*.geojson extension), SHP (\*.shp extension) and GeoPackage (\*.gpkg extension). | out.gpkg |
 
