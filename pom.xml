@@ -8,7 +8,7 @@
 	<packaging>jar</packaging>
 	<name>GeoDiff</name>
 	<url>https://github.com/eurostat/GeoDiff</url>
-	<description>Analyse changes between two versions of a vector geospatial dataset</description>
+	<description>Analyse differences between two versions of a vector geospatial dataset</description>
 
 	<licenses>
 		<license>
