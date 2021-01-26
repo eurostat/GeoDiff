@@ -197,8 +197,7 @@ public class GeoDiffJarMain {
 			System.out.println(geoDiff.getDifferences().size() + " differences found.");
 			System.out.println("Save...");
 
-			//force multi geometry
-			//TODO: obsolete?
+			//force multi geometry TODO: obsolete?
 			for(Feature f : geoDiff.getDifferences()) f.setGeometry( JTSGeomUtil.toMulti(f.getGeometry()) );
 			for(Feature f : geoDiff.getGeomDifferences()) f.setGeometry( JTSGeomUtil.toMulti(f.getGeometry()) );
 
@@ -207,8 +206,7 @@ public class GeoDiffJarMain {
 			GeoData.save(geoDiff.getGeomDifferences(), outFolder + File.separator + "geomdiff2." + outputFileFormat, crs);
 
 			Collection<Feature> is = GeoDiff.findIdStabilityIssues(geoDiff.getDifferences(), resolution);
-			//force multi geometry
-			//TODO: obsolete?
+			//force multi geometry TODO: obsolete?
 			for(Feature f : is) f.setGeometry( JTSGeomUtil.toMulti(f.getGeometry()) );
 			GeoData.save(is, outFolder + File.separator + "idstab." + outputFileFormat, crs);
 		}
