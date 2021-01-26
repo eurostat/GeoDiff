@@ -195,11 +195,12 @@ public class GeoDiffJarMain {
 			System.out.println(geoDiff.getDifferences().size() + " differences found.");
 			System.out.println("Save...");
 
-			//TODO ensure all geometry types are the same !
+			//TODO ensure all geometry types are the same as the inputs
 			GeoData.save(geoDiff.getDifferences(), outFolder + File.separator + "geodiff." + outputFileFormat, crs);
-
 			GeoData.save(geoDiff.getHausdorffGeomDifferences(), outFolder + File.separator + "geomdiff1." + outputFileFormat, crs);
+			//TODO ensure all geometry types are the same as the inputs
 			GeoData.save(geoDiff.getGeomDifferences(), outFolder + File.separator + "geomdiff2." + outputFileFormat, crs);
+			//TODO ensure all geometry types are the same as the inputs
 			GeoData.save(GeoDiff.findIdStabilityIssues(geoDiff.getDifferences(), resolution), outFolder + File.separator + "idstab." + outputFileFormat, crs);
 		}
 
