@@ -3,6 +3,7 @@ package eu.europa.ec.eurostat.geodiff;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -15,6 +16,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import eu.europa.ec.eurostat.jgiscotools.feature.Feature;
 import eu.europa.ec.eurostat.jgiscotools.feature.FeatureUtil;
+import eu.europa.ec.eurostat.jgiscotools.feature.JTSGeomUtil;
 import eu.europa.ec.eurostat.jgiscotools.geodiff.GeoDiff;
 import eu.europa.ec.eurostat.jgiscotools.io.geo.GeoData;
 
@@ -195,13 +197,20 @@ public class GeoDiffJarMain {
 			System.out.println(geoDiff.getDifferences().size() + " differences found.");
 			System.out.println("Save...");
 
-			//TODO ensure all geometry types are the same as the inputs
+			//force multi geometry
+			//TODO: obsolete?
+			for(Feature f : geoDiff.getDifferences()) f.setGeometry( JTSGeomUtil.toMulti(f.getGeometry()) );
+			for(Feature f : geoDiff.getGeomDifferences()) f.setGeometry( JTSGeomUtil.toMulti(f.getGeometry()) );
+
 			GeoData.save(geoDiff.getDifferences(), outFolder + File.separator + "geodiff." + outputFileFormat, crs);
 			GeoData.save(geoDiff.getHausdorffGeomDifferences(), outFolder + File.separator + "geomdiff1." + outputFileFormat, crs);
-			//TODO ensure all geometry types are the same as the inputs
 			GeoData.save(geoDiff.getGeomDifferences(), outFolder + File.separator + "geomdiff2." + outputFileFormat, crs);
-			//TODO ensure all geometry types are the same as the inputs
-			GeoData.save(GeoDiff.findIdStabilityIssues(geoDiff.getDifferences(), resolution), outFolder + File.separator + "idstab." + outputFileFormat, crs);
+
+			Collection<Feature> is = GeoDiff.findIdStabilityIssues(geoDiff.getDifferences(), resolution);
+			//force multi geometry
+			//TODO: obsolete?
+			for(Feature f : is) f.setGeometry( JTSGeomUtil.toMulti(f.getGeometry()) );
+			GeoData.save(is, outFolder + File.separator + "idstab." + outputFileFormat, crs);
 		}
 
 		//change application case
