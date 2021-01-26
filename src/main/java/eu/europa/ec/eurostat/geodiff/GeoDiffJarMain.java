@@ -134,7 +134,7 @@ public class GeoDiffJarMain {
 				}
 
 			//attributesToIgnore
-			//TODO test that
+			//TODO add test(s) for that
 			String[] attributesToIgnore = null;
 			param = cmd.getOptionValue("ati");
 			if(param != null && !"".equals(param)) {
@@ -194,7 +194,10 @@ public class GeoDiffJarMain {
 
 			System.out.println(geoDiff.getDifferences().size() + " differences found.");
 			System.out.println("Save...");
+
+			//TODO ensure all geometry types are the same !
 			GeoData.save(geoDiff.getDifferences(), outFolder + File.separator + "geodiff." + outputFileFormat, crs);
+
 			GeoData.save(geoDiff.getHausdorffGeomDifferences(), outFolder + File.separator + "geomdiff1." + outputFileFormat, crs);
 			GeoData.save(geoDiff.getGeomDifferences(), outFolder + File.separator + "geomdiff2." + outputFileFormat, crs);
 			GeoData.save(GeoDiff.findIdStabilityIssues(geoDiff.getDifferences(), resolution), outFolder + File.separator + "idstab." + outputFileFormat, crs);
