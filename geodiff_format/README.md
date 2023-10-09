@@ -16,7 +16,7 @@ It is assumed that:
 
 Each instance represents:
 - Either an **inserted** feature. For this case, the geometry and attribute values must be specified. The *GeoDiff* attribute must be set to *I*.
-- Or a **deleted** feature. For this case, geometry and attribute values are not required. The *GeoDiff* attribute must be set to *D*.
+- Or a **deleted** feature. For this case, geometry and attribute values (other than the identifier) are not required. The *GeoDiff* attribute must be set to *D*.
 - Or a **Modified** feature. For this case, modified elements (geometry and/or attribute values) must be specified. The other unchanged elements are not required. The *GeoDiff* attribute must be set to:
    * *G* if the geometry only was modified,
    * *An* if attribute values only were modified (*n* is the number of modified attributes. *n* is optional) and not the geometry,
