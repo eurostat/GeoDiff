@@ -28,8 +28,9 @@ public class GeoDiffJarMain {
 
 	/**
 	 * @param args
+	 * @throws Exception 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 
 		//define options
 		Options options = new Options();
@@ -100,8 +101,8 @@ public class GeoDiffJarMain {
 
 			//v1
 			System.out.println("Loading dataset version 1...");
-			param = cmd.getOptionValue("v1");
 			ArrayList<Feature> fs1 = null;
+			param = cmd.getOptionValue("v1");
 			try {
 				fs1 = GeoData.getFeatures(param);
 			} catch (Exception e) {
@@ -109,12 +110,13 @@ public class GeoDiffJarMain {
 				System.err.println(e.getMessage());
 				return;
 			}
+			if(fs1 == null) throw new Exception("Could not load data from " + param);
 			System.out.println("   " + fs1.size() + " features loaded.");
 
 			//v2
 			System.out.println("Loading dataset version 2...");
-			param = cmd.getOptionValue("v2");
 			ArrayList<Feature> fs2 = null;
+			param = cmd.getOptionValue("v2");
 			try {
 				fs2 = GeoData.getFeatures(param);
 			} catch (Exception e) {
@@ -122,6 +124,7 @@ public class GeoDiffJarMain {
 				System.err.println(e.getMessage());
 				return;
 			}
+			if(fs2 == null) throw new Exception("Could not load data from " + param);
 			System.out.println("   " + fs2.size() + " features loaded.");
 
 			//res
